@@ -3,10 +3,10 @@ const GIFEncoder = require('gif-encoder-2');
 const { PNG } = require('pngjs');
 const fs = require('fs');
 const path = require('path');
-const GIF_PAGES = [{ url: 'https://jinhyeon-park.github.io/closing-banner/index-1.html', output: 'index-1.gif', width: 860, selector: '.banner' }];
+const GIF_PAGES = [{ url: 'https://jinhyeon-park.github.io/closing-banner/index-1.html', output: 'index-1.gif', width: 860, selector: '.banner' }, { url: 'https://jinhyeon-park.github.io/closing-banner/mood-deadline.html', output: 'mood-deadline.gif', width: 860, height: 150, selector: '.banner' }];
 const FPS=5, DURATION_SEC=6, TOTAL_FRAMES=FPS*DURATION_SEC, FRAME_DELAY=1000/FPS;
 async function generateGif(page,config){
-  await page.setViewport({width:config.width,height:343,deviceScaleFactor:1});
+  await page.setViewport({width:config.width,height:config.height||343,deviceScaleFactor:1});
   await page.emulateTimezone('Asia/Seoul');
   const response=await page.goto(config.url,{waitUntil:'networkidle0',timeout:60000});
   if(!response||!response.ok())throw new Error('Banner load failed');
