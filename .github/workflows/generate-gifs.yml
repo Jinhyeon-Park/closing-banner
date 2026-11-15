@@ -1,7 +1,7 @@
 name: Generate GIFs Daily
 on:
   schedule:
-    - cron: '5 15 * * *' # 매일 한국시간 00:05, 지연될 수 있음
+    - cron: '0 15 * * *' # 매일 한국시간 00:00, GitHub 실행 지연 및 CDN 캐시 지연 가능
   workflow_dispatch:
 permissions:
   contents: write
