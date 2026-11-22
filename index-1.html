@@ -22,7 +22,7 @@ window.saleRange=saleRange;
 window.bannerReady=false;
 (async()=>{
   const text=document.getElementById('deadlineText');
-  const r=saleRange(new Date());
+  const r=saleRange(new Date(Date.now()-7200000)); // 한국시간 02:00 기준으로 날짜 변경 (0~2시는 전날 날짜 유지)
   text.innerHTML=r.start+'<i>-</i>'+r.end+'<em>까지</em>';
   const label='블랙프라이데이 행사 기간: '+r.start+' - '+r.end+'까지';
   document.querySelector('.banner').setAttribute('aria-label',label);
