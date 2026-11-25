@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html lang="ko"><head><meta charset="UTF-8"><meta name="viewport" content="width=860,initial-scale=1"><title>퓨어큐브 비마디 행사기한</title><style>
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard/dist/web/static/pretendard.css');
+@import url('https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable.css');
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{width:860px;background:#262626}
+.banner{position:relative;width:860px;height:344px;overflow:hidden;background:#262626}
+.background{position:absolute;inset:0;width:860px;height:344px;display:block}
+.date-wrap{position:absolute;left:8.02%;top:44.25%;width:55%;height:25.07%;display:flex;align-items:center;justify-content:flex-start}
+.date{display:inline-block;font-family:'Pretendard Variable','Pretendard',sans-serif;font-size:54px;font-weight:800;letter-spacing:-.02em;line-height:1.2;white-space:nowrap;font-variant-numeric:tabular-nums;transform-origin:left center;
+background:linear-gradient(110deg,#c99a45 0%,#e8c47a 30%,#fff3cf 42%,#fff 47%,#fff3cf 52%,#e8c47a 64%,#c99a45 100%);background-size:250% 100%;background-position:100% 0;
+-webkit-background-clip:text;background-clip:text;color:transparent;-webkit-text-fill-color:transparent;animation:shimmer 2.4s linear infinite}
+.date i{font-style:normal;font-weight:400;margin:0 .2em;color:#fff;-webkit-text-fill-color:#fff}
+.date em{font-style:normal;font-size:.48em;font-weight:700;margin-left:.3em}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+</style></head><body><div class="banner" role="img" aria-label="행사기한 안내"><img class="background" id="bgImage" alt="블랙프라이데이 행사 기한 안내" src="bimadi-bf-background.jpg"><div class="date-wrap"><span class="date" id="deadlineText"></span></div></div><script>
+function pad2(n){return String(n).padStart(2,'0');}
+function fmtMD(dt){return pad2(dt.getUTCMonth()+1)+'.'+pad2(dt.getUTCDate());}
+// Asia/Seoul calendar date -> {start: today-5, end: today} as MM.DD (UTC date math avoids DST/timezone drift)
+function saleRange(now){const p=new Intl.DateTimeFormat('en-US',{timeZone:'Asia/Seoul',year:'numeric',month:'numeric',day:'numeric'}).formatToParts(now||new Date());const g=t=>Number(p.find(v=>v.type===t).value);const y=g('year'),m=g('month'),d=g('day');return{start:fmtMD(new Date(Date.UTC(y,m-1,d-5))),end:fmtMD(new Date(Date.UTC(y,m-1,d)))};}
+window.saleRange=saleRange;
+window.bannerReady=false;
+(async()=>{
+  const text=document.getElementById('deadlineText');
+  const r=saleRange(new Date(Date.now()-7200000)); // 한국시간 02:00 기준으로 날짜 변경 (0~2시는 전날 날짜 유지)
+  text.innerHTML=r.start+'<i>-</i>'+r.end+'<em>까지</em>';
+  const label='블랙프라이데이 행사 기간: '+r.start+' - '+r.end+'까지';
+  document.querySelector('.banner').setAttribute('aria-label',label);
+  try{await Promise.all([document.fonts.load('800 60px "Pretendard Variable"'),document.fonts.load('800 60px Pretendard'),document.fonts.load('400 60px Pretendard'),document.fonts.load('700 29px Pretendard')]);}catch(e){}
+  try{await document.fonts.ready;}catch(e){}
+  const bg=document.getElementById('bgImage');
+  try{if(!bg.complete)await new Promise((res,rej)=>{bg.onload=res;bg.onerror=rej;});await bg.decode();}catch(e){console.error('background decode failed',e);}
+  const wrap=document.querySelector('.date-wrap');
+  text.style.transform='none';
+  const avail=wrap.getBoundingClientRect().width,w=text.getBoundingClientRect().width;
+  if(w>avail)text.style.transform='scaleX('+(avail/w)+')';
+  window.bannerReady=true;
+})();
+</script></body></html>

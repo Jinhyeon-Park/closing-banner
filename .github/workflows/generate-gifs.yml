@@ -35,6 +35,7 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
           git add index-1.gif mood-deadline.gif
+          if [ -f bimadi-bf.gif ]; then git add bimadi-bf.gif; fi
           if ! git diff --staged --quiet; then
             git commit -m "Update closing banner - $(date +'%Y-%m-%d')"
             git push

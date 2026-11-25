@@ -3,7 +3,7 @@ const GIFEncoder = require('gif-encoder-2');
 const { PNG } = require('pngjs');
 const fs = require('fs');
 const path = require('path');
-const GIF_PAGES = [{ url: 'https://jinhyeon-park.github.io/closing-banner/index-1.html', output: 'index-1.gif', width: 860, selector: '.banner' }, { url: 'https://jinhyeon-park.github.io/closing-banner/mood-deadline.html', output: 'mood-deadline.gif', width: 860, height: 150, selector: '.banner' }];
+const GIF_PAGES = [{ url: 'https://jinhyeon-park.github.io/closing-banner/index-1.html', output: 'index-1.gif', width: 860, selector: '.banner' }, { url: 'https://jinhyeon-park.github.io/closing-banner/mood-deadline.html', output: 'mood-deadline.gif', width: 860, height: 150, selector: '.banner' }, { url: 'https://jinhyeon-park.github.io/closing-banner/bimadi-bf.html', output: 'bimadi-bf.gif', width: 860, height: 344, selector: '.banner', optional: true }];
 const FPS=5, DURATION_SEC=6, TOTAL_FRAMES=FPS*DURATION_SEC, FRAME_DELAY=1000/FPS;
 async function generateGif(page,config){
   await page.setViewport({width:config.width,height:config.height||343,deviceScaleFactor:1});
@@ -26,4 +26,4 @@ async function generateGif(page,config){
   encoder.finish();const output=path.join(__dirname,config.output);fs.writeFileSync(output,encoder.out.getData());
   console.log('Saved',config.output,config.width+'x'+height,fs.statSync(output).size+' bytes');
 }
-(async()=>{const browser=await puppeteer.launch({headless:true,args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage']});try{const page=await browser.newPage();for(const config of GIF_PAGES)await generateGif(page,config);}finally{await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});
+(async()=>{const browser=await puppeteer.launch({headless:true,args:['--no-sandbox','--disable-setuid-sandbox','--disable-dev-shm-usage']});try{const page=await browser.newPage();for(const config of GIF_PAGES){try{await generateGif(page,config);}catch(error){if(!config.optional)throw error;console.error('Optional banner failed (others kept):',config.output,error);}}}finally{await browser.close();}})().catch(error=>{console.error(error);process.exitCode=1;});
